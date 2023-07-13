@@ -23,4 +23,5 @@
 # 12. MVC Architecture ( Model=> data, Views=> frontend part and Controllers=> Logical part)
 
 # 13. Connect to MongoDB database
-# e-Commerce-MERN-Project-server
+
+# 14. Schema and Model for User
