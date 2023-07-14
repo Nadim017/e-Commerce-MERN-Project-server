@@ -28,6 +28,8 @@
 
 # 15. Create seed route for testing
 
-# 16. get api/users => isAdmin => getAllUsers => searchName + pagination functionality
+# 16. Get api/users => isAdmin => getAllUsers => searchName + pagination functionality
 
 # 17. responseHandler controller for error or success.
+
+# 18. GET /api/users/:id => get a single user by id

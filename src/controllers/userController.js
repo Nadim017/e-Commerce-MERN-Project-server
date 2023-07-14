@@ -1,12 +1,34 @@
 const createError = require('http-errors');
 const User = require('../models/userModels');
 const { successResponse } = require('./responseController');
+const mongoose = require('mongoose');
 
+const getUser = async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    const options = { password: 0 };
+    const user = await User.findById(id, options);
+    if (!user) {
+      throw createError(404, 'user does not exist with this id ');
+    }
+    return successResponse(res, {
+      statusCode: 200,
+      message: 'user were return successfully',
+      payload: { user },
+    });
+  } catch (error) {
+    if (error instanceof mongoose.Error) {
+      next(createError(400, 'invalid user id'));
+      return;
+    }
+    next(error);
+  }
+};
 const getUsers = async (req, res, next) => {
   try {
     const search = req.query.search || '';
     const page = Number(req.query.page) || 1;
-    const limit = Number(req.query.limit) || 1;
+    const limit = Number(req.query.limit) || 5;
     const searchRegExp = new RegExp('.*' + search + '.*', 'i');
     const filter = {
       isAdmin: { $ne: true },
@@ -40,4 +62,4 @@ const getUsers = async (req, res, next) => {
     next(error);
   }
 };
-module.exports = { getUsers };
+module.exports = { getUsers, getUser };
