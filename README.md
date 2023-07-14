@@ -25,3 +25,5 @@
 # 13. Connect to MongoDB database
 
 # 14. Schema and Model for User
+
+# 15. Create seed route for testing
