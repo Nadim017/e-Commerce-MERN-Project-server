@@ -41,3 +41,7 @@
 # 21. Refactoring and reusability,dynamic
 
 # 22. deleteImage helper function
+
+# 23. POST /api/users/process-register => process the registration
+
+# 24. POST /api/users/verify => verify + register into database.

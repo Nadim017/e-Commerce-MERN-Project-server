@@ -22,28 +22,7 @@ const getUserById = async (req, res, next) => {
     next(error);
   }
 };
-const deleteUserById = async (req, res, next) => {
-  try {
-    const id = req.params.id;
-    const options = { password: 0 };
-    const user = await findWithId(User, id, options);
 
-    const userImagePath = user.image;
-    deleteImage(userImagePath);
-
-    await User.findByIdAndDelete({
-      _id: id,
-      isAdmin: false,
-    });
-
-    return successResponse(res, {
-      statusCode: 200,
-      message: 'user was deleted successfully',
-    });
-  } catch (error) {
-    next(error);
-  }
-};
 const getUsers = async (req, res, next) => {
   try {
     const search = req.query.search || '';
@@ -82,4 +61,46 @@ const getUsers = async (req, res, next) => {
     next(error);
   }
 };
-module.exports = { getUsers, getUserById, deleteUserById };
+const deleteUserById = async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    const options = { password: 0 };
+    const user = await findWithId(User, id, options);
+
+    const userImagePath = user.image;
+    deleteImage(userImagePath);
+
+    await User.findByIdAndDelete({
+      _id: id,
+      isAdmin: false,
+    });
+
+    return successResponse(res, {
+      statusCode: 200,
+      message: 'user was deleted successfully',
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+const processRegister = async (req, res, next) => {
+  try {
+    const { name, email, password, phone, address } = req.body;
+    const userExists = await User.exists({ email: email });
+    if (userExists) {
+      throw createError(
+        409,
+        'User with this email already exists.Please sign in'
+      );
+    }
+    const newUser = { name, email, password, phone, address };
+    return successResponse(res, {
+      statusCode: 200,
+      message: 'user was created successfully',
+      payload: { newUser },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+module.exports = { getUsers, getUserById, deleteUserById, processRegister };
