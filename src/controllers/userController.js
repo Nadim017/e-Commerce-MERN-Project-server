@@ -1,5 +1,6 @@
 const createError = require('http-errors');
 const fs = require('fs').promises;
+const jwt = require('jsonwebtoken');
 
 const User = require('../models/userModels');
 const { successResponse } = require('./responseController');
@@ -89,6 +90,7 @@ const deleteUserById = async (req, res, next) => {
 const processRegister = async (req, res, next) => {
   try {
     const { name, email, password, phone, address } = req.body;
+
     const userExists = await User.exists({ email: email });
     if (userExists) {
       throw createError(
@@ -124,11 +126,50 @@ const processRegister = async (req, res, next) => {
 
     return successResponse(res, {
       statusCode: 200,
-      message: `please go to your email for completing your registration process`,
+      message: `please go to your ${email} for completing your registration process`,
       payload: { token },
     });
   } catch (error) {
     next(error);
   }
 };
-module.exports = { getUsers, getUserById, deleteUserById, processRegister };
+const ActivateUserAccount = async (req, res, next) => {
+  try {
+    const token = req.body.token;
+    if (!token) throw createError(404, 'token not found');
+    try {
+      const decoded = jwt.verify(token, jwtActivationKey);
+      if (!decoded) throw createError(401, 'user was not able to verified');
+
+      const userExists = await User.exists({ email: decoded.email });
+      if (userExists) {
+        throw createError(
+          409,
+          'User with this email already exists.Please sign in'
+        );
+      }
+      await User.create(decoded);
+      return successResponse(res, {
+        statusCode: 201,
+        message: 'user was registered successfully',
+      });
+    } catch (error) {
+      if (error.name === 'tokenExpiredError') {
+        throw createError(401, 'Token has expired');
+      } else if (error.name === 'JsonWebTokenError') {
+        throw createError(401, 'Invalid Token');
+      } else {
+        throw error;
+      }
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+module.exports = {
+  getUsers,
+  getUserById,
+  deleteUserById,
+  processRegister,
+  ActivateUserAccount,
+};
