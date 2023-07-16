@@ -44,4 +44,16 @@
 
 # 23. POST /api/users/process-register => process the registration
 
-# 24. POST /api/users/verify => verify + register into database.
+# 24. Create JWT.
+
+# 25. setup smtp server and prepare email
+
+# 26. send email
+
+# 27. POST /api/users/verify => verify + register into database.
+
+# 28. add express validator middleware
+
+# 29. add multer middleware for file upload
+
+# 30. PUT /api/user/:id => update a single user by id
